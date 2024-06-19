@@ -3,8 +3,16 @@ project(aria)
 
 #set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -Wall -Wno-long-long -Wno-unused-variable -Wno-variadic-macros -pedantic")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -Wall -Wno-long-long -Wno-unused-variable -Wno-variadic-macros -pedantic -O2")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -Wall -Wno-long-long -Wno-unused-variable -Wno-variadic-macros -g -pedantic -O2")
 set(CMAKE_CXX_STANDARD 14)
+
+set(CMAKE_BUILD_TYPE Release CACHE STRING "Build configuration (Release/Debug)")
+set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+message(STATUS "Build configuration: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Install directory: ${CMAKE_INSTALL_PREFIX}")
 
 find_library(jemalloc_lib jemalloc) # jemalloc 5.0
 
@@ -32,7 +40,7 @@ if(APPLE)
     find_package(gflags REQUIRED)
     target_link_libraries(common ${jemalloc_lib} glog::glog gflags)
 else()
-    target_link_libraries(common ${jemalloc_lib} glog gflags)
+    target_link_libraries(common ${jemalloc_lib} glog.a gflags.a)
 endif()
 
 add_executable(bench_tpcc bench_tpcc.cpp)
